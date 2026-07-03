@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem; 
+using UnityEngine.InputSystem;
 
 public class testPlayerMove : MonoBehaviour
 {
@@ -11,25 +11,25 @@ public class testPlayerMove : MonoBehaviour
     [SerializeField] private InputActionAsset InputActions; //put InputSystem_Actions in here
 
     //Input Actions
-    private InputAction moveInput;    
-    private InputAction turnInput;    
-    private InputAction jumpInput;    
+    private InputAction moveInput;
+    private InputAction turnInput;
+    private InputAction jumpInput;
 
 
     //tool objects
-    [SerializeField]private GameObject glideObj; //If this is active, player glides
-                                                //with zero downward force
-    [SerializeField]private GameObject dashObj; //If this is active, player moves very fast   
+    [SerializeField] private GameObject glideObj; //If this is active, player glides
+                                                  //with zero downward force
+    [SerializeField] private GameObject dashObj; //If this is active, player moves very fast   
 
-    [SerializeField]private GameObject violetLightObj; //If this is active, player moves very fast   
-    [SerializeField]private GameObject redLightObj; //If this is active, player moves very fast   
-                                                
-    [SerializeField]private GameObject climbObj; //If this is active, player moves very fast      
-    [SerializeField]private GameObject freelookCam; //track this for switching movement modes 
+    [SerializeField] private GameObject violetLightObj; //If this is active, player moves very fast   
+    [SerializeField] private GameObject redLightObj; //If this is active, player moves very fast   
 
-    [SerializeField]private GameObject firstPersonCam; //track this for switching movement modes 
-    [SerializeField]private GameObject followCam; //track this for switching movement modes
-    [SerializeField]private GameObject groundCheckObj; //track this for switching movement modes
+    [SerializeField] private GameObject climbObj; //If this is active, player moves very fast      
+    [SerializeField] private GameObject freelookCam; //track this for switching movement modes 
+
+    [SerializeField] private GameObject firstPersonCam; //track this for switching movement modes 
+    [SerializeField] private GameObject followCam; //track this for switching movement modes
+    [SerializeField] private GameObject groundCheckObj; //track this for switching movement modes
 
     ///quat4cam, messing around with the followcam
     Quaternion camQuatRotation; ///ignore, hopefully won't use
@@ -50,20 +50,20 @@ public class testPlayerMove : MonoBehaviour
     public float jumpForce;
     private Vector2 groundMoveValue; ///how much the player moves forward and back
     private Vector2 turnMoveValue; ///how much the player rotates looking
-    [SerializeField]private bool isJumping; //tells the physics engine we're jumping this frame
+    [SerializeField] private bool isJumping; //tells the physics engine we're jumping this frame
     private Vector3 rayOrigin;
 
 
 
     //Stamina stuff and resource stuff
-    [SerializeField]public float staminaCurrent; //current stamina
-    [SerializeField]public static float staminaMax; //max stamina, static so it persists between scenes
-    [SerializeField]public float manaLanternCurrent; //current stamina
-    [SerializeField]public static float manaSILLanternMax; //max stamina
-    [SerializeField]public float manaSprayCurrent; //current stamina
-    [SerializeField]public static float manaSILSprayMax; //max stamina
-    [SerializeField]public float manaBucketCurrent; //current stamina
-    [SerializeField]public static float manaSILBucketMax; //max stamina
+    [SerializeField] public float staminaCurrent; //current stamina
+    [SerializeField] public static float staminaMax; //max stamina, static so it persists between scenes
+    [SerializeField] public float manaLanternCurrent; //current stamina
+    [SerializeField] public static float manaSILLanternMax; //max stamina
+    [SerializeField] public float manaSprayCurrent; //current stamina
+    [SerializeField] public static float manaSILSprayMax; //max stamina
+    [SerializeField] public float manaBucketCurrent; //current stamina
+    [SerializeField] public static float manaSILBucketMax; //max stamina
 
 
     //Rigidbody
@@ -73,10 +73,10 @@ public class testPlayerMove : MonoBehaviour
     /// isGrounded is set by the GroundCheckobj, which is a child of the PlayerObj
     /// that has a short script attached to check to see if its collider is touching a collider
     /// in the Grounded layer
-    [SerializeField]public bool isGrounded;  //are they touching the ground?
-    
+    [SerializeField] public bool isGrounded;  //are they touching the ground?
 
-    [SerializeField]private bool ableToClimb; //Can the horizontal climb ray touch a wall?    
+
+    [SerializeField] private bool ableToClimb; //Can the horizontal climb ray touch a wall?    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -85,22 +85,22 @@ public class testPlayerMove : MonoBehaviour
         /// after that they will always be higher, so this should
         /// only happen once at the very beginning of the game, 
         /// not every time the level loads
-        if(staminaMax == 0)
+        if (staminaMax == 0)
         {
             staminaMax = 30;
         }
 
-        if(manaSILLanternMax == 0)
+        if (manaSILLanternMax == 0)
         {
             manaSILLanternMax = 30;
         }
 
-        if(manaSILSprayMax == 0)
+        if (manaSILSprayMax == 0)
         {
             manaSILSprayMax = 3;
         }
 
-        if(manaSILBucketMax == 0)
+        if (manaSILBucketMax == 0)
         {
             manaSILBucketMax = 3;
         }
@@ -120,7 +120,7 @@ public class testPlayerMove : MonoBehaviour
         moveInput = InputSystem.actions.FindAction("Move");
         jumpInput = InputSystem.actions.FindAction("Jump");
         turnInput = InputSystem.actions.FindAction("Look");
-        
+
 
         ///Lock the Cursor to the center of the screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
@@ -149,95 +149,101 @@ public class testPlayerMove : MonoBehaviour
         //tracks how much lantern mana's been used
 
         //Read the value off the input and assign it to the groundMove vector2
+        
         groundMoveValue = moveInput.ReadValue<Vector2>();
         turnMoveValue = turnInput.ReadValue<Vector2>();
-
     }
 
     private void FixedUpdate()
     {
 
-        if(isJumping == true)
+        if (isJumping == true)
         {
             //add the jump force to the Y axis and don't add any force to x or z
             //because you're already getting those forces 
             rb.AddRelativeForce(0, jumpForce, 0, ForceMode.Impulse);
             isJumping = false;
         }
- 
 
- 
+        rb.AddRelativeForce(groundMoveValue.x * playerSpeed, playerDownwardForce, groundMoveValue.y * playerSpeed);
+        rb.AddRelativeTorque(0, turnMoveValue.x * playerTurnSpeed, 0, ForceMode.VelocityChange);
 
 
-
-        if(followCam.activeInHierarchy == true) ///check which camera's on
+        /*
+        if (followCam.activeInHierarchy == true) ///check which camera's on
         {
             ///Add force to the rigidbody in the direction and amount 
             /// of groundMoveValue * the variable playerSpeed
             /// to X and Z, 
             /// while Y is dependent on if grounded, jumping, gliding, or climbing.
-            rb.AddRelativeForce(groundMoveValue.x * playerSpeed, playerDownwardForce, groundMoveValue.y * playerSpeed);
+            if (groundMoveValue.x != 0 || groundMoveValue.y != 0 || playerDownwardForce != 0)
+            {
+                rb.AddRelativeForce(groundMoveValue.x * playerSpeed, playerDownwardForce, groundMoveValue.y * playerSpeed);
+            }
 
             ///forcemode documentation below
             /// https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Rigidbody.AddForce.html
             /// There are 4 different types of forces you can apply, what each does is detailed in 
             /// the documentation
             ///for 3rdPersonHardlock cam
-            rb.AddRelativeTorque(0,turnMoveValue.x * playerTurnSpeed,0, ForceMode.VelocityChange);
+            rb.AddRelativeTorque(0, turnMoveValue.x * playerTurnSpeed, 0, ForceMode.VelocityChange);
         }
 
-//        if(freelookCam.activeInHierarchy == true) ///check which camera's on
+        //        if(freelookCam.activeInHierarchy == true) ///check which camera's on
         {
 
 
             ///for freelook cam, , 
             /// make player move 
             /// in the direction of the camera
-//            rb.AddRelativeForce(groundMoveValue.x * playerSpeed, playerDownwardForce, groundMoveValue.y * playerSpeed);
+            //            rb.AddRelativeForce(groundMoveValue.x * playerSpeed, playerDownwardForce, groundMoveValue.y * playerSpeed);
 
             ///I hate fucking Quats
             /// https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Quaternion.html
             /// https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Quaternion.LookRotation.html
             /// https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Quaternion.SetFromToRotation.html
- //          Vector3 movementDirection = new Vector3(freelookCam.transform.rotation.x, 0, freelookCam.transform.rotation.z);
-//            Vector3 camRotation = new Vector3(freelookCam.transform.rotation.x, 0, freelookCam.transform.rotation.z);
+            //          Vector3 movementDirection = new Vector3(freelookCam.transform.rotation.x, 0, freelookCam.transform.rotation.z);
+            //            Vector3 camRotation = new Vector3(freelookCam.transform.rotation.x, 0, freelookCam.transform.rotation.z);
 
 
- //           if(groundMoveValue.x +groundMoveValue.y == 0)
- //           {
-//
-            
-//            Vector3 camRotation = new Vector3(freelookCam.transform.rotation.x * -1, 0, freelookCam.transform.rotation.z * -1);
+            //           if(groundMoveValue.x +groundMoveValue.y == 0)
+            //           {
+            //
+
+            //            Vector3 camRotation = new Vector3(freelookCam.transform.rotation.x * -1, 0, freelookCam.transform.rotation.z * -1);
             //this one looks at an object that's opposite the camera
- //           Vector3 awayFromCamPos = new Vector3(transform.position.x - freelookCam.transform.position.x, transform.position.y, transform.position.z - freelookCam.transform.position.z);
- //           transform.eulerAngles = camRotation;
-//            Quaternion camQuatRotation = Quaternion.LookRotation(camRotation, Vector3.up);
-//            camQuatRotation = new Quaternion();
- //           camQuatRotation = Quaternion.SetFromToRotation(transform.position, awayFromCamPos);           
- //           transform.rotation = camQuatRotation * transform.rotation;
-//            transform.LookAt(awayFromCamPos);
+            //           Vector3 awayFromCamPos = new Vector3(transform.position.x - freelookCam.transform.position.x, transform.position.y, transform.position.z - freelookCam.transform.position.z);
+            //           transform.eulerAngles = camRotation;
+            //            Quaternion camQuatRotation = Quaternion.LookRotation(camRotation, Vector3.up);
+            //            camQuatRotation = new Quaternion();
+            //           camQuatRotation = Quaternion.SetFromToRotation(transform.position, awayFromCamPos);           
+            //           transform.rotation = camQuatRotation * transform.rotation;
+            //            transform.LookAt(awayFromCamPos);
 
- //           transform.LookAt(freelookCam.transform.position);
- //           }
+            //           transform.LookAt(freelookCam.transform.position);
+            //           }
 
 
 
         }
 
-        if(firstPersonCam.activeInHierarchy == true) ///check which camera's on
+        if (firstPersonCam.activeInHierarchy == true) ///check which camera's on
         {
             ///Do 1st person movement
             /// make player move 
             /// in the direction the player points
-            rb.AddRelativeForce(groundMoveValue.x * playerSpeed, playerDownwardForce, groundMoveValue.y * playerSpeed);
+            if (groundMoveValue.x > 0 || groundMoveValue.y > 0 || playerDownwardForce != 0)
+            {
+                rb.AddRelativeForce(groundMoveValue.x * playerSpeed, playerDownwardForce, groundMoveValue.y * playerSpeed);
+            }
 
             Vector3 movementDirection = new Vector3(groundMoveValue.x, 0, groundMoveValue.y);
             transform.forward = movementDirection;
-            rb.AddRelativeTorque(0,turnMoveValue.x * playerTurnSpeed,0, ForceMode.VelocityChange);
+            rb.AddRelativeTorque(0, turnMoveValue.x * playerTurnSpeed, 0, ForceMode.VelocityChange);
 
 
 
-        }
+        }*/
 
         //Jump Stuff
 
@@ -252,72 +258,69 @@ public class testPlayerMove : MonoBehaviour
 
         ///////Change this to a collider, we have our toe on the edge of stuff sometimes and count
         /// as in the air
-//        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.3f, groundMask);
+        //        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.3f, groundMask);
         //Debug.DrawRay is just so we can see where the ray is in scene view, it has
         //no impact on anything else
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Debug.DrawRay.html
- //       Debug.DrawRay(transform.position, Vector3.down, Color.red, 1.3f);
+        //       Debug.DrawRay(transform.position, Vector3.down, Color.red, 1.3f);
 
         //We are casting from a lower point of origin so we can make slanted walls that are not climbable
-        rayOrigin = new Vector3(transform.position.x, transform.position.y-1, transform.position.z);
+        rayOrigin = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
         ableToClimb = Physics.Raycast(rayOrigin, transform.TransformDirection(Vector3.forward), 1.5f);
         //Debug.DrawRay is just so we can see where the ray is in scene view, it has
         //no impact on anything else
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Debug.DrawRay.html
 
         Debug.DrawRay(rayOrigin, transform.TransformDirection(Vector3.forward), Color.green, 1.5f);
-//groundCheckObj
+        //groundCheckObj
     }
 
-        //Track what we're doing while we're in the air
+    //Track what we're doing while we're in the air
     private void AirTracker()
     {
         //check for jump input
-        if((jumpInput.WasPressedThisFrame()) && (isGrounded == true))
+        if ((jumpInput.WasPressedThisFrame()) && (isGrounded == true))
         {
-            //this is done this way so we don't deduct the stamina twice 
-            //if they hold the jump button too long
-            if((isJumping == false) && (staminaCurrent > 10))
+            if ((isJumping == false))
             {
-            isJumping = true;
-            staminaCurrent = staminaCurrent - 10;
+                isJumping = true;
             }
         }
 
         //check for jump input
-        if((jumpInput.WasPressedThisFrame()) && (ableToClimb == true))
+        if ((jumpInput.WasPressedThisFrame()) && (ableToClimb == true))
         {
-            if(climbObj.activeInHierarchy == true)
+            if (climbObj.activeInHierarchy == true)
             {
                 //this is done this way so we don't deduct the stamina twice 
                 //if they hold the jump button too long
-                if((isJumping == false) && (staminaCurrent > 10))
+                if ((isJumping == false) && (staminaCurrent > 10))
                 {
-                isJumping = true;
-                staminaCurrent = staminaCurrent - 10;
+                    isJumping = true;
+                    staminaCurrent = staminaCurrent - 10;
                 }
-            } 
+            }
         }
 
-        if(isGrounded == false) 
+        if (isGrounded == false)
         {
             //check to see if gliding or climbing
-            if((glideObj.activeInHierarchy == false) && (climbObj.activeInHierarchy == false))//is the Glide obj active?
+            if ((glideObj.activeInHierarchy == false) && (climbObj.activeInHierarchy == false))//is the Glide obj active?
             {
-            playerDownwardForce = fallingDownwardForce; //If in the air, force the player to the ground quicker
-            //rb.AddForce(0, playerDownwardForce, 0, ForceMode.Impulse); ///put this in physics
+                playerDownwardForce = fallingDownwardForce; //If in the air, force the player to the ground quicker
+                                                            //rb.AddForce(0, playerDownwardForce, 0, ForceMode.Impulse); ///put this in physics
             }
 
-                        //check to see if gliding is true
-            if((glideObj.activeInHierarchy == true) && (climbObj.activeInHierarchy == false))//is the Glide obj active?
+            //check to see if gliding is true
+            if ((glideObj.activeInHierarchy == true) && (climbObj.activeInHierarchy == false))//is the Glide obj active?
             {
-            playerDownwardForce = glidingDownwardForce; //Set downwardForce to glide
+                playerDownwardForce = glidingDownwardForce; //Set downwardForce to glide
             }
 
-                        //check to see if climbing is true
-            if((glideObj.activeInHierarchy == false) && (climbObj.activeInHierarchy == true))//is the Climb obj active?
+            //check to see if climbing is true
+            if ((glideObj.activeInHierarchy == false) && (climbObj.activeInHierarchy == true))//is the Climb obj active?
             {
-            playerDownwardForce = climbingDownwardForce; //Set downwardForce to glide
+                playerDownwardForce = climbingDownwardForce; //Set downwardForce to glide
             }
         }
         else
@@ -331,21 +334,21 @@ public class testPlayerMove : MonoBehaviour
 
     private void StaminaTracker()
     {
-        if(staminaCurrent < staminaMax) //if staminaCurr is less than staminaMax, add stamina
+        if (staminaCurrent < staminaMax) //if staminaCurr is less than staminaMax, add stamina
         {
-            staminaCurrent += Time.deltaTime*3;
+            staminaCurrent += Time.deltaTime * 3;
         }
 
-        if((climbObj.activeInHierarchy == true) && (isGrounded == false)) //if staminaCurr is less than staminaMax, add stamina
+        if ((climbObj.activeInHierarchy == true) && (isGrounded == false)) //if staminaCurr is less than staminaMax, add stamina
         {
-            staminaCurrent -= Time.deltaTime*6;
+            staminaCurrent -= Time.deltaTime * 6;
         }
 
-        if((glideObj.activeInHierarchy == true) && (isGrounded == false)) //if staminaCurr is less than staminaMax, add stamina
+        if ((glideObj.activeInHierarchy == true) && (isGrounded == false)) //if staminaCurr is less than staminaMax, add stamina
         {
-            staminaCurrent -= Time.deltaTime*6;
+            staminaCurrent -= Time.deltaTime * 6;
         }
-        if(staminaCurrent < 0)
+        if (staminaCurrent < 0)
         {
             staminaCurrent = 0;
         }
@@ -366,14 +369,14 @@ public class testPlayerMove : MonoBehaviour
 
 
     //Stamina stuff and resource stuff
-//    [SerializeField]public float staminaCurrent; //current stamina
- //   [SerializeField]public static float staminaMax; //max stamina, static so it persists between scenes
- //   [SerializeField]public float manaLanternCurrent; //current stamina
- //   [SerializeField]public static float manaSILLanternMax; //max stamina
-  //  [SerializeField]public int manaSprayCurrent; //current stamina
- //   [SerializeField]public static int manaSILSprayMax; //max stamina
- //   [SerializeField]public int manaBucketCurrent; //current stamina
- //   [SerializeField]public static int manaSILBucketMax; //max stamina
+    //    [SerializeField]public float staminaCurrent; //current stamina
+    //   [SerializeField]public static float staminaMax; //max stamina, static so it persists between scenes
+    //   [SerializeField]public float manaLanternCurrent; //current stamina
+    //   [SerializeField]public static float manaSILLanternMax; //max stamina
+    //  [SerializeField]public int manaSprayCurrent; //current stamina
+    //   [SerializeField]public static int manaSILSprayMax; //max stamina
+    //   [SerializeField]public int manaBucketCurrent; //current stamina
+    //   [SerializeField]public static int manaSILBucketMax; //max stamina
 
 
 
