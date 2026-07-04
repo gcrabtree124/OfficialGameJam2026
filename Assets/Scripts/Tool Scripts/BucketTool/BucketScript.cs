@@ -74,7 +74,7 @@ public class BucketScript : MonoBehaviour
 
         ///If we have placed the Out puddle, store its location 
         /// in targPos
-        if(rmbPuddlesPlaced == 1)
+        if(rmbPuddlesPlaced == 2)
         {
         teleportTarget = GameObject.Find("PuddleLMBOut(Clone)"); 
         targPos = teleportTarget.transform.position; //store the transform.position of the out location
@@ -113,10 +113,10 @@ public class BucketScript : MonoBehaviour
 
                 case 1:
                 ///First check to make sure you're not too close to the Out Puddle
-                distanceToOutPuddle = Vector3.Distance(targPos, transform.position);                
+                //distanceToOutPuddle = Vector3.Distance(targPos, transform.position);                
                 
-                if(distanceToOutPuddle > 5)
-                {
+                //if(distanceToOutPuddle > 2)
+                //{
                  ///1 puddle? Place the Out puddle
                 //Create the appropriate puddle
                 //the prefab you dragged into the lmbInPuddle variable
@@ -125,12 +125,12 @@ public class BucketScript : MonoBehaviour
                 rmbPuddlesPlaced++; //add 1 to the number of puddles placed
                 ///and deduct the bucketmana you spent                
                 testPlayerMove.manaBucketCurrent--;    
-                }
-                else
-                {
+                //}
+                //else
+                //{
                     ///tell the player they're trying to place
                     /// too close to the Out Puddle
-                }
+                //}
             
                 break;
 

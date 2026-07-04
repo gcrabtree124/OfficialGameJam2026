@@ -7,8 +7,10 @@ public class PuddlePorterScript : MonoBehaviour
     /// so we only look for the teleport target when it's been created
     /// otherwise there's an annoying error
     ///other scripts
- //   [SerializeField]private BucketScript bucketScript;
-    
+    [SerializeField] private BucketScript bucketScript;
+    [SerializeField] //serialized for debugging
+    private int puddleCount;
+
 
 
     ///teleporter prefab gameobjects
@@ -41,23 +43,35 @@ public class PuddlePorterScript : MonoBehaviour
 
 
         /// Only check for the exit portal if it's been placed
-//        if(bucketScript.rmbPuddlesPlaced == 1)
-//        {
-           teleportTarget = GameObject.Find("PuddleLMBOut(Clone)"); 
-            targPos = teleportTarget.transform.position; //store the transform.position of the out location
+        //if (bucketScript.rmbPuddlesPlaced == 2)
+        //{
+        if (bucketScript != null)
+        {
+            puddleCount = bucketScript.rmbPuddlesPlaced;
+        }
 
-//        }
+        teleportTarget = GameObject.Find("PuddleLMBOut(Clone)");
+        if (teleportTarget != null)
+        {
+            targPos = teleportTarget.transform.position; //store the transform.position of the out location
+        }
+        else if (objToTeleport != null)
+        {
+            targPos = objToTeleport.transform.position;
+        }
+
+        //}
 
 
     }
 
     private void OnTriggerEnter(Collider other)
     {
-
-        if((other.tag == "Player") && (teleportTarget.name == "PuddleLMBOut(Clone)"))
+        if ((teleportTarget != null) && (other.tag == "Player") && (teleportTarget.name == "PuddleLMBOut(Clone)"))
+            //&& (puddleCount == 2))
         {
             //Get the other collider's GameObject and store it as ObjToTeleport
-            objToTeleport = other.gameObject; 
+            objToTeleport = other.gameObject;
 
             //Teleport the object you just collided with to the out location
             objToTeleport.transform.position = targPos;
