@@ -5,7 +5,7 @@ public class TestGroundCheck : MonoBehaviour
 
     //vars
     ///other scripts
-    [SerializeField]private testPlayerMove testPlayerMove;
+    [SerializeField] private testPlayerMove testPlayerMove;
 
 
 
@@ -16,7 +16,7 @@ public class TestGroundCheck : MonoBehaviour
 
 
 
-        
+
     }
     //In the Inspector, we have the Sphere Collider's layer overrides
     //set to only include the Ground layer,
@@ -25,12 +25,17 @@ public class TestGroundCheck : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-
-           testPlayerMove.isGrounded = true;
+        if (other.tag == "Grounder") 
+        {
+            testPlayerMove.isGrounded = true;
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-           testPlayerMove.isGrounded = false;
+        if (other.tag == "Grounder")
+        {
+            testPlayerMove.isGrounded = false;
+        }
     }
 }
