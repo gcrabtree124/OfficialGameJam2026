@@ -87,22 +87,22 @@ public class testPlayerMove : MonoBehaviour
         /// not every time the level loads
         if (staminaMax == 0)
         {
-            staminaMax = 300;
+            staminaMax = 30;
         }
 
         if (manaSILLanternMax == 0)
         {
-            manaSILLanternMax = 300;
+            manaSILLanternMax = 30;
         }
 
         if (manaSILSprayMax == 0)
         {
-            manaSILSprayMax = 30;
+            manaSILSprayMax = 3;
         }
 
         if (manaSILBucketMax == 0)
         {
-            manaSILBucketMax = 30;
+            manaSILBucketMax = 3;
         }
 
         ///When scene loads, set current values to their max values
