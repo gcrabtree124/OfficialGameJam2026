@@ -69,6 +69,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18f2fdfd6050cf041aeb0a21faa506ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuddlePorterScript
+  bucketScript: {fileID: 0}
+  puddleCount: 0
   objToTeleport: {fileID: 0}
   teleportTarget: {fileID: 0}
 --- !u!1 &1484622403842103096
