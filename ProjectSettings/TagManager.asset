@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Grounder
+  - Interactable
   layers:
   - Default
   - TransparentFX

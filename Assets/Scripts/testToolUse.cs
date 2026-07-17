@@ -205,6 +205,7 @@ public class testToolUse : MonoBehaviour
         if(other.tag == "Interactable")
         {
         objInInteractionCollider = other.gameObject; 
+        Debug.Log("objInInteractionCollider set to: " + objInInteractionCollider.name);
         }
     }
     
@@ -215,7 +216,8 @@ public class testToolUse : MonoBehaviour
     {
         if(other.tag == "Interactable")
         {
-        objInInteractionCollider = null;             
+        objInInteractionCollider = null;  
+        Debug.Log("objInInteractionCollider reset to null");                      
         }
     }
     ///Make an OnTriggerExit to remove the object if the object isn't in range
@@ -231,6 +233,7 @@ public class testToolUse : MonoBehaviour
 
         if(interactInput.WasPressedThisFrame())
         {
+            Debug.Log( objInInteractionCollider.name);
             if(objInInteractionCollider.name == "Lantern") //check the name of the game object
             {
             objInInteractionCollider.gameObject.SetActive(false); //disable the game object the collider is attached to
@@ -293,7 +296,7 @@ public class testToolUse : MonoBehaviour
             // if (objInInteractionCollider == null)
             //     return;
 
- ///           objInInteractionCollider.GetComponent<DialogueTrigger>()?.TriggerDialogue();
+            objInInteractionCollider.GetComponent<DialogueTrigger>()?.TriggerDialogue();
         }
     }
 
