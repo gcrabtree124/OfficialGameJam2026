@@ -57,9 +57,10 @@ public class DialogueManager : MonoBehaviour
         //set time scale to 0 to pause the game
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Time-timeScale.html
 
-        Time.timeScale = 0f; 
+        //Time.timeScale = 0f; 
         InputActions.FindActionMap("Player").Disable(); 
         InputActions.FindActionMap("Dialogue").Enable(); 
+        InputActions.FindActionMap("UI").Enable(); 
         dialogueCanvas.SetActive(true);
         currentStory = new Story(inkJSON.text);
         inkExternalFunctions.bindIncreaseSIL(currentStory, "increaseSIL");
@@ -186,17 +187,23 @@ public class DialogueManager : MonoBehaviour
     }
 
     private void AddDialogueLine(string text)
-    {
-        GameObject entry = Instantiate(dialogueEntryPrefab, dialogueContent);
+{
+    GameObject entry = Instantiate(dialogueEntryPrefab, dialogueContent);
 
-        TMP_Text textComponent = entry.GetComponentInChildren<TMP_Text>();
+    TMP_Text textComponent = entry.GetComponentInChildren<TMP_Text>();
+    textComponent.text = text;
 
-        textComponent.text = text;
+    textComponent.ForceMeshUpdate();
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(
-            dialogueContent.GetComponent<RectTransform>()
-        );
-    }
+    LayoutElement layout = entry.GetComponent<LayoutElement>();
+    layout.preferredHeight = textComponent.preferredHeight;
+
+    Canvas.ForceUpdateCanvases();
+
+    LayoutRebuilder.ForceRebuildLayoutImmediate(
+        dialogueContent.GetComponent<RectTransform>()
+    );
+}
     private void ClearDialogueHistory(){
         foreach (Transform child in dialogueContent)
         {
