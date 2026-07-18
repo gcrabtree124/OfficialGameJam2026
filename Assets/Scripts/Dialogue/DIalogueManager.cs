@@ -60,7 +60,6 @@ public class DialogueManager : MonoBehaviour
         //Time.timeScale = 0f; 
         InputActions.FindActionMap("Player").Disable(); 
         InputActions.FindActionMap("Dialogue").Enable(); 
-        InputActions.FindActionMap("UI").Enable(); 
         dialogueCanvas.SetActive(true);
         currentStory = new Story(inkJSON.text);
         inkExternalFunctions.bindIncreaseSIL(currentStory, "increaseSIL");
