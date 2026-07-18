@@ -15,7 +15,8 @@ public class DialogueManager : MonoBehaviour
 
     private InkExternalFunctions inkExternalFunctions; //functions to be called in the ink editor
 
-    [SerializeField] private TMP_Text dialogueText;
+    [SerializeField] private GameObject dialogueEntryPrefab;
+    [SerializeField] private Transform dialogueContent;
 
     [SerializeField] private Transform choicesPanel;
 
@@ -87,7 +88,7 @@ public class DialogueManager : MonoBehaviour
             } 
             else
             {
-                dialogueText.text = text;
+                AddDialogueLine(text);
                 Debug.Log(text);
             }
             
@@ -95,7 +96,7 @@ public class DialogueManager : MonoBehaviour
         
         else if (currentStory.currentChoices.Count > 0)
         {
-            dialogueText.text = "";
+            
 
             DisplayChoices();
         }
@@ -111,7 +112,7 @@ public class DialogueManager : MonoBehaviour
         Time.timeScale = 1f; 
         InputActions.FindActionMap("Dialogue").Disable(); 
         InputActions.FindActionMap("Player").Enable(); 
-        dialogueText.text = "";
+        ClearDialogueHistory();
         Debug.Log("Story Ended");
         inkExternalFunctions.unbindIncreaseSIL(currentStory);
         inkExternalFunctions.unbindGetSIL(currentStory);
@@ -181,6 +182,25 @@ public class DialogueManager : MonoBehaviour
                 DialogueManager.Instance.ContinueStory();
                 return;
             }
+        }
+    }
+
+    private void AddDialogueLine(string text)
+    {
+        GameObject entry = Instantiate(dialogueEntryPrefab, dialogueContent);
+
+        TMP_Text textComponent = entry.GetComponentInChildren<TMP_Text>();
+
+        textComponent.text = text;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(
+            dialogueContent.GetComponent<RectTransform>()
+        );
+    }
+    private void ClearDialogueHistory(){
+        foreach (Transform child in dialogueContent)
+        {
+            Destroy(child.gameObject);
         }
     }
 }
