@@ -3,7 +3,7 @@ using Ink.Runtime;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
-
+using System.Collections;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -23,8 +23,15 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject choiceButtonPrefab;
 
     [SerializeField] private GameObject dialogueCanvas;
+
+    [SerializeField] private ScrollRect dialogueScrollRect;
     
     [SerializeField] private InputActionAsset InputActions; //put InputSystem_Actions in here
+
+    private float viewportHeight;
+    private float contentHeight;
+    private int fullPanels = 0;
+
 
     
     public bool DialogueActive
@@ -37,7 +44,6 @@ public class DialogueManager : MonoBehaviour
         Instance = this;
         dialogueCanvas.SetActive(false);
         inkExternalFunctions = new InkExternalFunctions();
-        Debug.Log("inkExternalFunctions instance created: " + inkExternalFunctions);
 
     }
 
@@ -57,7 +63,7 @@ public class DialogueManager : MonoBehaviour
         //set time scale to 0 to pause the game
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Time-timeScale.html
 
-        //Time.timeScale = 0f; 
+        Time.timeScale = 0f; 
         InputActions.FindActionMap("Player").Disable(); 
         InputActions.FindActionMap("Dialogue").Enable(); 
         dialogueCanvas.SetActive(true);
@@ -65,7 +71,7 @@ public class DialogueManager : MonoBehaviour
         inkExternalFunctions.bindIncreaseSIL(currentStory, "increaseSIL");
         inkExternalFunctions.bindGetSIL(currentStory);
         
-
+        StartCoroutine(ScrollToBottom());
         ContinueStory();
 
         Cursor.lockState = CursorLockMode.Confined;
@@ -89,7 +95,6 @@ public class DialogueManager : MonoBehaviour
             else
             {
                 AddDialogueLine(text);
-                Debug.Log(text);
             }
             
         }
@@ -143,7 +148,6 @@ public class DialogueManager : MonoBehaviour
         for (int i = 0; i < currentStory.currentChoices.Count; i++)
         {
             Choice choice = currentStory.currentChoices[i];
-            Debug.Log("Displaying choice: " + choice.text);
 
             GameObject buttonObj =
                 Instantiate(choiceButtonPrefab, choicesPanel);
@@ -202,6 +206,22 @@ public class DialogueManager : MonoBehaviour
     LayoutRebuilder.ForceRebuildLayoutImmediate(
         dialogueContent.GetComponent<RectTransform>()
     );
+
+    if (IsAtBottom()){
+        RectTransform entryRect = entry.GetComponent<RectTransform>();
+        RectTransform contentRect = dialogueContent.GetComponent<RectTransform>();
+
+        float emptySpace = dialogueScrollRect.viewport.rect.height - entryRect.rect.height;
+        VerticalLayoutGroup dialogueLayoutGroup = dialogueContent.GetComponent<VerticalLayoutGroup>();
+        dialogueLayoutGroup.padding.bottom = Mathf.Max(0, Mathf.RoundToInt(emptySpace));
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+
+        dialogueScrollRect.verticalNormalizedPosition = 0f;
+    }
+    
+    
+    
 }
     private void ClearDialogueHistory(){
         foreach (Transform child in dialogueContent)
@@ -209,4 +229,35 @@ public class DialogueManager : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
+
+
+    private IEnumerator ScrollToBottom()
+{
+    yield return null;
+
+    dialogueScrollRect.verticalNormalizedPosition = 0f;
+}
+
+    bool IsAtBottom(){
+    RectTransform content = dialogueContent.GetComponent<RectTransform>();
+    RectTransform viewport = dialogueScrollRect.viewport;
+
+    float contentHeight = content.rect.height;
+    float viewportHeight = viewport.rect.height;
+    Debug.Log("contentHeight: " + contentHeight);
+    Debug.Log("viewportHeight: " + viewportHeight); 
+
+    int contentRatio = (int)(contentHeight / viewportHeight);
+    Debug.Log("contentRatio: " + contentRatio);
+
+    // no scrolling needed
+    if (contentRatio > fullPanels){
+        fullPanels = contentRatio;
+        Debug.Log("fullPanels CHECK: " + fullPanels);
+        return true;
+    }
+    return false;
+        
+        
+}
 }

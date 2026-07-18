@@ -205,7 +205,6 @@ public class testToolUse : MonoBehaviour
         if(other.tag == "Interactable")
         {
         objInInteractionCollider = other.gameObject; 
-        Debug.Log("objInInteractionCollider set to: " + objInInteractionCollider.name);
         }
     }
     
@@ -217,7 +216,6 @@ public class testToolUse : MonoBehaviour
         if(other.tag == "Interactable")
         {
         objInInteractionCollider = null;  
-        Debug.Log("objInInteractionCollider reset to null");                      
         }
     }
     ///Make an OnTriggerExit to remove the object if the object isn't in range
