@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
+
+
 
 public class DialogueManager : MonoBehaviour
 {
@@ -16,11 +19,12 @@ public class DialogueManager : MonoBehaviour
     private InkExternalFunctions inkExternalFunctions; //functions to be called in the ink editor
 
     [SerializeField] private GameObject dialogueEntryPrefab;
+    
     [SerializeField] private Transform dialogueContent;
 
-    [SerializeField] private Transform choicesPanel;
+    [SerializeField] private GameObject choiceEntryPrefab;
 
-    [SerializeField] private GameObject choiceButtonPrefab;
+    private List<GameObject> activeChoices = new List<GameObject>();
 
     [SerializeField] private GameObject dialogueCanvas;
 
@@ -28,11 +32,16 @@ public class DialogueManager : MonoBehaviour
     
     [SerializeField] private InputActionAsset InputActions; //put InputSystem_Actions in here
 
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private Image portraitImage;
+
     private float viewportHeight;
     private float contentHeight;
     private int fullPanels = 0;
 
 
+    private Dictionary<string, Sprite> backgrounds = new Dictionary<string, Sprite>();
+    private Dictionary<string, Sprite> portraits = new Dictionary<string, Sprite>();
     
     public bool DialogueActive
     {
@@ -45,6 +54,8 @@ public class DialogueManager : MonoBehaviour
         dialogueCanvas.SetActive(false);
         inkExternalFunctions = new InkExternalFunctions();
 
+        populateDictionariesWithAssets();
+        
     }
 
     private void OnEnable()
@@ -87,6 +98,8 @@ public class DialogueManager : MonoBehaviour
         if (currentStory.canContinue)
         {
             string text = currentStory.Continue();
+
+            HandleTags();
             if (text.Equals("") && !currentStory.canContinue)  //making sure there are no white space at the end of dialogue
             {
                 EndDialogue();
@@ -130,7 +143,6 @@ public class DialogueManager : MonoBehaviour
 
     public void ChooseChoice(int index)
     {
-
         ClearChoices();
         currentStory.ChooseChoiceIndex(index);
         ContinueStory();
@@ -138,44 +150,42 @@ public class DialogueManager : MonoBehaviour
 
     private void DisplayChoices()
     {
-        // Clear old buttons
-        foreach (Transform child in choicesPanel)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // Create new buttons
         for (int i = 0; i < currentStory.currentChoices.Count; i++)
         {
             Choice choice = currentStory.currentChoices[i];
 
-            GameObject buttonObj =
-                Instantiate(choiceButtonPrefab, choicesPanel);
-            
-            TMP_Text buttonText =
-                buttonObj.GetComponentInChildren<TMP_Text>();
+            GameObject entry = Instantiate(choiceEntryPrefab, dialogueContent);
 
-            buttonText.text = choice.text;
+            activeChoices.Add(entry);
+
+            TMP_Text text = entry.GetComponentInChildren<TMP_Text>();
+            text.text = (i + 1) + ". " + choice.text;
+
+            Button button = entry.GetComponent<Button>();
 
             int choiceIndex = i;
-
-            Button button = buttonObj.GetComponent<Button>();
 
             button.onClick.AddListener(() =>
             {
                 ChooseChoice(choiceIndex);
             });
         }
-        // Canvas.ForceUpdateCanvases();
-        // LayoutRebuilder.ForceRebuildLayoutImmediate(choicesPanel as RectTransform);
+
+        Canvas.ForceUpdateCanvases();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(
+            dialogueContent.GetComponent<RectTransform>()
+        );
     }
 
     private void ClearChoices()
     {
-        foreach (Transform child in choicesPanel)
+        foreach(GameObject choice in activeChoices)
         {
-            Destroy(child.gameObject);
+            Destroy(choice);
         }
+
+        activeChoices.Clear();
     }
 
 
@@ -224,6 +234,7 @@ public class DialogueManager : MonoBehaviour
     
 }
     private void ClearDialogueHistory(){
+
         foreach (Transform child in dialogueContent)
         {
             Destroy(child.gameObject);
@@ -231,33 +242,82 @@ public class DialogueManager : MonoBehaviour
     }
 
 
-    private IEnumerator ScrollToBottom()
-{
-    yield return null;
+    private IEnumerator ScrollToBottom(){
 
+    yield return null;
     dialogueScrollRect.verticalNormalizedPosition = 0f;
+
 }
 
     bool IsAtBottom(){
-    RectTransform content = dialogueContent.GetComponent<RectTransform>();
-    RectTransform viewport = dialogueScrollRect.viewport;
 
-    float contentHeight = content.rect.height;
-    float viewportHeight = viewport.rect.height;
-    Debug.Log("contentHeight: " + contentHeight);
-    Debug.Log("viewportHeight: " + viewportHeight); 
+        RectTransform content = dialogueContent.GetComponent<RectTransform>();
+        RectTransform viewport = dialogueScrollRect.viewport;
 
-    int contentRatio = (int)(contentHeight / viewportHeight);
-    Debug.Log("contentRatio: " + contentRatio);
+        float contentHeight = content.rect.height;
+        float viewportHeight = viewport.rect.height;
 
-    // no scrolling needed
-    if (contentRatio > fullPanels){
-        fullPanels = contentRatio;
-        Debug.Log("fullPanels CHECK: " + fullPanels);
-        return true;
-    }
-    return false;
-        
+        int contentRatio = (int)(contentHeight / viewportHeight);
+
+        // no scrolling needed
+        if (contentRatio > fullPanels){
+            fullPanels = contentRatio;
+            return true;
+        }
+        return false;
         
 }
+
+    private void populateDictionariesWithAssets(){
+
+        Sprite[] loadedBackgrounds = Resources.LoadAll<Sprite>("Backgrounds");
+
+        foreach(Sprite sprite in loadedBackgrounds)
+        {
+            backgrounds.Add(sprite.name, sprite);
+        }
+
+
+        Sprite[] loadedPortraits = Resources.LoadAll<Sprite>("Portraits");
+
+        foreach(Sprite sprite in loadedPortraits)
+        {
+            portraits.Add(sprite.name, sprite);
+        }
+    }
+
+    private void HandleTags(){
+
+        foreach(string tag in currentStory.currentTags)
+        {
+            string[] split = tag.Split(' ');
+
+            if(split.Length < 2)
+                continue;
+
+
+            switch(split[0])
+            {
+                case "bg":
+
+                    if(backgrounds.ContainsKey(split[1]))
+                    {
+                        backgroundImage.sprite = backgrounds[split[1]];
+                    }
+
+                    break;
+
+
+                case "portrait":
+
+                    if(portraits.ContainsKey(split[1]))
+                    {
+                        portraitImage.sprite = portraits[split[1]];
+                    }
+
+                    break;
+            }
+        }
+    }
+
 }
