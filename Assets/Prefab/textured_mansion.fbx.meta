@@ -3,7 +3,42 @@ guid: 42d9cecc71b8646499a47a50cc44652e
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: concrete_mat
+    second: {fileID: 2100000, guid: 161be09ff07ec9b48b39b9ac78440c32, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass_mat
+    second: {fileID: 2100000, guid: 6d90a5259732f31448b3e3e9fc7a8b92, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wallpaper_mat
+    second: {fileID: 2100000, guid: 4ea5e51705028a046bb3f964dc16f028, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_floor_mat
+    second: {fileID: 2100000, guid: 2bb02372a30c00a4eac7423bd971971c, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: concrete_1_tile
+    second: {fileID: 2800000, guid: 255657dde384cbe448bd42cf770169be, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: wallpaper_victorian_tile
+    second: {fileID: 2800000, guid: 0a0b9b7d312acc045b725698b4ef14d9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: wood_brick_tile_diffuse
+    second: {fileID: 2800000, guid: 54885fb597504d04380b9971649b7e67, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
