@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 
 
+
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance;
@@ -102,7 +103,7 @@ public class DialogueManager : MonoBehaviour
             HandleTags();
             if (text.Equals("") && !currentStory.canContinue)  //making sure there are no white space at the end of dialogue
             {
-                EndDialogue();
+                DialogueManager.Instance.ContinueStory(); //EndDialogue(); //Removed so story doesn't end before going to new knots
                 return;
             } 
             else
@@ -141,6 +142,8 @@ public class DialogueManager : MonoBehaviour
         
     }
 
+   
+
     public void ChooseChoice(int index)
     {
         ClearChoices();
@@ -159,7 +162,7 @@ public class DialogueManager : MonoBehaviour
             activeChoices.Add(entry);
 
             TMP_Text text = entry.GetComponentInChildren<TMP_Text>();
-            text.text = (i + 1) + ". " + choice.text;
+            text.text = choice.text; // cut: (i + 1) + ". " + 
 
             Button button = entry.GetComponent<Button>();
 
@@ -190,13 +193,13 @@ public class DialogueManager : MonoBehaviour
 
 
     private void DialogueInteractInputChecker(){
-        if(dialogueAdvanceInput.WasPressedThisFrame()){
+       if(dialogueAdvanceInput.WasPressedThisFrame()){
             if (DialogueManager.Instance.DialogueActive)
             {
-                DialogueManager.Instance.ContinueStory();
-                return;
+               DialogueManager.Instance.ContinueStory();
+               return;
             }
-        }
+       }
     }
 
     private void AddDialogueLine(string text)
@@ -308,7 +311,7 @@ public class DialogueManager : MonoBehaviour
                     break;
 
 
-                case "portrait":
+                case "sprite":
 
                     if(portraits.ContainsKey(split[1]))
                     {
