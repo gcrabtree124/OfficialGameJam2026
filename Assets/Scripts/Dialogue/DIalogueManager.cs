@@ -23,6 +23,8 @@ public class DialogueManager : MonoBehaviour
     
     [SerializeField] private Transform dialogueContent;
 
+    [SerializeField] private Transform choicesPanel;
+
     [SerializeField] private GameObject choiceEntryPrefab;
 
     private List<GameObject> activeChoices = new List<GameObject>();
@@ -35,6 +37,10 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image portraitImage;
+
+
+    [SerializeField] private TMP_Text characterNameText;
+    [SerializeField] private TMP_Text dialogueText;
 
     private float viewportHeight;
     private float contentHeight;
@@ -83,7 +89,7 @@ public class DialogueManager : MonoBehaviour
         inkExternalFunctions.bindIncreaseSIL(currentStory, "increaseSIL");
         inkExternalFunctions.bindGetSIL(currentStory);
         
-        StartCoroutine(ScrollToBottom());
+        //StartCoroutine(ScrollToBottom());
         ContinueStory();
 
         Cursor.lockState = CursorLockMode.Confined;
@@ -108,7 +114,7 @@ public class DialogueManager : MonoBehaviour
             } 
             else
             {
-                AddDialogueLine(text);
+                dialogueText.text = text;
             }
             
         }
@@ -153,11 +159,12 @@ public class DialogueManager : MonoBehaviour
 
     private void DisplayChoices()
     {
+        dialogueText.text = ""; // Clear the dialogue text when displaying choices
         for (int i = 0; i < currentStory.currentChoices.Count; i++)
         {
             Choice choice = currentStory.currentChoices[i];
 
-            GameObject entry = Instantiate(choiceEntryPrefab, dialogueContent);
+            GameObject entry = Instantiate(choiceEntryPrefab, choicesPanel);
 
             activeChoices.Add(entry);
 
@@ -177,7 +184,7 @@ public class DialogueManager : MonoBehaviour
         Canvas.ForceUpdateCanvases();
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(
-            dialogueContent.GetComponent<RectTransform>()
+            choicesPanel.GetComponent<RectTransform>()
         );
     }
 
