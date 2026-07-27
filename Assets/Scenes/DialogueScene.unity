@@ -6020,6 +6020,7 @@ MonoBehaviour:
   portraitImage: {fileID: 839725172}
   characterNameText: {fileID: 0}
   dialogueText: {fileID: 2097946489}
+  typingSpeed: 0.01
 --- !u!4 &1670818334
 Transform:
   m_ObjectHideFlags: 0
@@ -6649,7 +6650,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: f24a59f968f48174799ed61e93526cd8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7665,7 +7666,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 12.247253, y: 10.358429, z: -941.7042, w: -293.3922}
+  m_margin: {x: 12.247253, y: 25.405682, z: -941.7042, w: -293.3922}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

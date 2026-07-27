@@ -50,6 +50,12 @@ public class DialogueManager : MonoBehaviour
     private Dictionary<string, Sprite> backgrounds = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> portraits = new Dictionary<string, Sprite>();
     
+
+    private Coroutine typingCoroutine;
+    private bool isTyping = false;
+
+    [SerializeField]
+    private float typingSpeed = 0.01f;
     public bool DialogueActive
     {
         get { return currentStory != null; }
@@ -74,6 +80,7 @@ public class DialogueManager : MonoBehaviour
     private void Update()
     {
         DialogueInteractInputChecker();
+        CheckChoiceInput();
     }
     public void StartStory(TextAsset inkJSON)
     {
@@ -84,16 +91,28 @@ public class DialogueManager : MonoBehaviour
         Time.timeScale = 0f; 
         InputActions.FindActionMap("Player").Disable(); 
         InputActions.FindActionMap("Dialogue").Enable(); 
-        dialogueCanvas.SetActive(true);
         currentStory = new Story(inkJSON.text);
         inkExternalFunctions.bindIncreaseSIL(currentStory, "increaseSIL");
         inkExternalFunctions.bindGetSIL(currentStory);
         
         //StartCoroutine(ScrollToBottom());
-        ContinueStory();
+        // ContinueStory();
+        StartCoroutine(StartDialogueAfterFrame());
 
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+    }
+
+    private IEnumerator StartDialogueAfterFrame()
+    {
+        yield return null;
+
+        dialogueCanvas.SetActive(true);
+
+
+        Canvas.ForceUpdateCanvases();
+
+        ContinueStory();
     }
 
     public void ContinueStory()
@@ -114,7 +133,12 @@ public class DialogueManager : MonoBehaviour
             } 
             else
             {
-                dialogueText.text = text;
+                if (typingCoroutine != null)
+                    {
+                        StopCoroutine(typingCoroutine);
+                    }
+
+                    typingCoroutine = StartCoroutine(TypeText(text));
             }
             
         }
@@ -199,14 +223,26 @@ public class DialogueManager : MonoBehaviour
     }
 
 
-    private void DialogueInteractInputChecker(){
-       if(dialogueAdvanceInput.WasPressedThisFrame()){
-            if (DialogueManager.Instance.DialogueActive)
+    private void DialogueInteractInputChecker()
+    {
+        if(dialogueAdvanceInput.WasPressedThisFrame())
+        {
+            if (!DialogueActive)
+                return;
+
+            if (isTyping)
             {
-               DialogueManager.Instance.ContinueStory();
-               return;
+                dialogueText.maxVisibleCharacters = dialogueText.textInfo.characterCount;
+ 
+                StopCoroutine(typingCoroutine);
+                typingCoroutine = null;
+                isTyping = false;
             }
-       }
+            else
+            {
+                ContinueStory();
+            }
+        }
     }
 
     private void AddDialogueLine(string text)
@@ -301,7 +337,7 @@ public class DialogueManager : MonoBehaviour
         foreach(string tag in currentStory.currentTags)
         {
             string[] split = tag.Split(' ');
-
+            Debug.Log("Tag: " + tag);
             if(split.Length < 2)
                 continue;
 
@@ -330,4 +366,53 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+
+    private IEnumerator TypeText(string text)
+    {
+        isTyping = true;
+
+        dialogueText.text = text;
+        dialogueText.ForceMeshUpdate();
+
+        int totalCharacters = dialogueText.textInfo.characterCount;
+
+        WaitForSecondsRealtime delay = new WaitForSecondsRealtime(typingSpeed);
+
+        for (int i = 0; i <= totalCharacters; i++)
+        {
+            dialogueText.maxVisibleCharacters = i;
+            yield return delay;
+        }
+
+        isTyping = false;
+        typingCoroutine = null;
+    }
+
+    private void CheckChoiceInput()
+    {
+        if (currentStory == null  || currentStory.currentChoices.Count == 0 || currentStory.currentChoices == null)
+            return;
+
+        int choiceCount = currentStory.currentChoices.Count;
+
+        if (Keyboard.current.digit1Key.wasPressedThisFrame && choiceCount >= 1)
+        {
+            ChooseChoice(0);
+        }
+
+        if (Keyboard.current.digit2Key.wasPressedThisFrame && choiceCount >= 2)
+        {
+            ChooseChoice(1);
+        }
+
+        if (Keyboard.current.digit3Key.wasPressedThisFrame && choiceCount >= 3)
+        {
+            ChooseChoice(2);
+        }
+
+        if (Keyboard.current.digit4Key.wasPressedThisFrame && choiceCount >= 4)
+        {
+            ChooseChoice(3);
+        }
+    }
 }
