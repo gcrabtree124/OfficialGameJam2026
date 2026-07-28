@@ -130,7 +130,7 @@ public class DialogueManager : MonoBehaviour
 
             if (!string.IsNullOrWhiteSpace(text))
             {
-                StartCoroutine(TypeText(text));
+                typingCoroutine = StartCoroutine(TypeText(text));
             }
         }
 
