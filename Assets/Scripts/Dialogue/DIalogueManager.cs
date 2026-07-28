@@ -117,39 +117,28 @@ public class DialogueManager : MonoBehaviour
 
     public void ContinueStory()
     {
-        if (currentStory == null){return;}
+        if (currentStory == null)
+            return;
 
         ClearChoices();
-        
+
         if (currentStory.canContinue)
         {
             string text = currentStory.Continue();
 
             HandleTags();
-            if (text.Equals("") && !currentStory.canContinue)  //making sure there are no white space at the end of dialogue
-            {
-                DialogueManager.Instance.ContinueStory(); //EndDialogue(); //Removed so story doesn't end before going to new knots
-                return;
-            } 
-            else
-            {
-                if (typingCoroutine != null)
-                    {
-                        StopCoroutine(typingCoroutine);
-                    }
 
-                    typingCoroutine = StartCoroutine(TypeText(text));
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                StartCoroutine(TypeText(text));
             }
-            
         }
-        
-        else if (currentStory.currentChoices.Count > 0)
-        {
-            
 
+        if (currentStory.currentChoices.Count > 0)
+        {
             DisplayChoices();
         }
-        else
+        else if (!currentStory.canContinue)
         {
             EndDialogue();
         }
@@ -183,10 +172,12 @@ public class DialogueManager : MonoBehaviour
 
     private void DisplayChoices()
     {
-        dialogueText.text = ""; // Clear the dialogue text when displaying choices
+        //dialogueText.text = ""; // Clear the dialogue text when displaying choices
+        HandleTags();
         for (int i = 0; i < currentStory.currentChoices.Count; i++)
         {
             Choice choice = currentStory.currentChoices[i];
+
 
             GameObject entry = Instantiate(choiceEntryPrefab, choicesPanel);
 
@@ -334,12 +325,16 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleTags(){
 
+        Debug.Log("Current Tags: " + string.Join(", ", currentStory.currentTags));
         foreach(string tag in currentStory.currentTags)
         {
             string[] split = tag.Split(' ');
             Debug.Log("Tag: " + tag);
-            if(split.Length < 2)
+            if(split.Length < 2){
+                Debug.LogWarning("Tag does not have enough parameters: " + tag);
                 continue;
+
+            }
 
 
             switch(split[0])
