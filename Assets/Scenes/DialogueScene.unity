@@ -1804,7 +1804,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 838, y: 50}
+  m_AnchoredPosition: {x: 890, y: 112}
   m_SizeDelta: {x: 140, y: 25}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &656044181
@@ -2655,7 +2655,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: db68cf90b773a31429e42d615902762d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b100e8f1f483354409b62f7ffa9394ec, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4265,14 +4265,14 @@ RectTransform:
   m_GameObject: {fileID: 1245367159}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6674047, y: 0.4110801, z: 1}
+  m_LocalScale: {x: 0.6674047, y: 0.35967344, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1883862248}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 119, y: -61}
+  m_AnchoredPosition: {x: 76, y: -66}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1245367161
@@ -4293,7 +4293,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 40
+  m_Spacing: 60
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -4314,7 +4314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.1273585, b: 0.1273585, a: 1}
+  m_Color: {r: 1, g: 0.1273585, b: 0.1273585, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7908,7 +7908,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 12.247253, y: 3.0192723, z: -1056.2028, w: -199.38963}
+  m_margin: {x: 0.10353575, y: 3.0192723, z: -1124.91, w: -208.15645}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
