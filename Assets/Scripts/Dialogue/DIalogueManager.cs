@@ -124,7 +124,7 @@ public class DialogueManager : MonoBehaviour
 
         if (currentStory.canContinue)
         {
-            string text = currentStory.Continue();
+            string text = currentStory.ContinueMaximally();
 
             HandleTags();
 
@@ -165,6 +165,7 @@ public class DialogueManager : MonoBehaviour
 
     public void ChooseChoice(int index)
     {
+        dialogueText.text = ""; // Clear the dialogue text when displaying choices
         ClearChoices();
         currentStory.ChooseChoiceIndex(index);
         ContinueStory();
@@ -172,7 +173,7 @@ public class DialogueManager : MonoBehaviour
 
     private void DisplayChoices()
     {
-        //dialogueText.text = ""; // Clear the dialogue text when displaying choices
+        
         HandleTags();
         for (int i = 0; i < currentStory.currentChoices.Count; i++)
         {
